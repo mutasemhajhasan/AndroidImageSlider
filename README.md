@@ -47,6 +47,7 @@ lateinit var sliderView: SliderView
             )
         )
         sliderView.setImages(images)
+	//duration in ms
         sliderView.setSlideDuration(3000)
         sliderView.setAutoSlide(true)
     }
