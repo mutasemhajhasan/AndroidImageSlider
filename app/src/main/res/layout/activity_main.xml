@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <me.mutasem.imageslider.SliderView
+        android:id="@+id/slider"
+        app:captionTextSize="16sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:captionBgColor="#888888"
+        app:captionTextColor="#FFFFFF" />
+
+    <TextView
+        android:padding="5dp"
+        android:justificationMode="inter_word"
+        android:textSize="15sp"
+        android:layout_margin="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="@string/desc" />
+
+</LinearLayout>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SliderView">
+        <attr name="captionTextColor" format="color" />
+        <attr name="captionTextSize" format="dimension" />
+        <attr name="captionBgColor" format="color" />
+        <attr name="autoSlide" format="boolean" />
+        <attr name="slideDuration" format="integer" />
+    </declare-styleable>
+</resources>
