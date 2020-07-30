@@ -30,8 +30,4 @@ class MainActivity : AppCompatActivity() {
         sliderView.setAutoSlide(true)
     }
 
-    override fun onDestroy() {
-        sliderView.stopSlide()
-        super.onDestroy()
-    }
 }
