@@ -1,6 +1,8 @@
 # AndroidImageSlider
 A simple yet effective android image slider
 
+<img src="https://raw.githubusercontent.com/mutasemhajhasan/AndroidImageSlider/master/demo.gif" />
+
 # Usage
 ## gradle
 ```gradle
