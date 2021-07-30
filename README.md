@@ -13,8 +13,8 @@ A simple yet effective android image slider
 		}
 	}
   
-  	dependencies {
-	        implementation 'com.github.mutasemhajhasan:AndroidImageSlider:1.0.0'
+        dependencies {
+	        implementation 'com.github.mutasemhajhasan:AndroidImageSlider:1.2'
 	}
 ```
 ## activity.xml
