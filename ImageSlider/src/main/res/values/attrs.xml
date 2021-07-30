@@ -5,6 +5,13 @@
         <attr name="captionTextSize" format="dimension" />
         <attr name="captionBgColor" format="color" />
         <attr name="autoSlide" format="boolean" />
+        <attr name="showDots" format="boolean" />
         <attr name="slideDuration" format="integer" />
+        <attr name="transformation" format="enum">
+            <enum name="slide" value="0" />
+            <enum name="cube" value="1" />
+            <enum name="spin" value="2" />
+            <enum name="zoomOut" value="3" />
+        </attr>
     </declare-styleable>
 </resources>

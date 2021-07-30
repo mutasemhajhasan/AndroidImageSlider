@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Build
 import android.util.AttributeSet
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import android.widget.RelativeLayout
 import androidx.annotation.RequiresApi
@@ -15,21 +16,25 @@ import java.util.*
 
 class SliderView : RelativeLayout {
     val TAG = "SliderView"
-    private lateinit var tabLayout: TabLayout
+    private lateinit var sliderDots: TabLayout
     lateinit var slideAdapter: SlideAdapter
-    lateinit var viewPager2: ViewPager2
+    lateinit var imageSlides: ViewPager2
+    private var transformation = 0
     private var autoSlide = false
+    private var showDots = false
     private var slideDuration = 1000
     var captionTextColor: Int? = null
     var captionTextSize: Float? = null
     var captionBgColor: Int? = null
     val autoSlideRunnable = object : Runnable {
         override fun run() {
-            val nextPage =
-                if (viewPager2.currentItem == (viewPager2.adapter?.itemCount?.minus(1))) 0
-                else
-                    viewPager2.currentItem + 1
-            viewPager2.setCurrentItem(nextPage, false)
+            if (imageSlides.currentItem == (imageSlides.adapter?.itemCount?.minus(
+                    1
+                ))
+            ) imageSlides.setCurrentItem(0, false)
+            else
+                imageSlides.setCurrentItem(imageSlides.currentItem + 1, true)
+
             postDelayed(this, slideDuration.toLong())
         }
 
@@ -72,11 +77,12 @@ class SliderView : RelativeLayout {
         slideAdapter = SlideAdapter(
             arrayListOf()
         )
-        viewPager2 = findViewById(R.id.pager)
-        tabLayout = findViewById(R.id.tabs)
-        viewPager2.adapter = slideAdapter
-        TabLayoutMediator(tabLayout, viewPager2) { tab, position ->
-            viewPager2.setCurrentItem(tab.position, false)
+        imageSlides = findViewById(R.id.pager)
+        sliderDots = findViewById(R.id.tabs)
+        sliderDots.visibility = if (showDots) View.VISIBLE else View.GONE
+        imageSlides.adapter = slideAdapter
+        TabLayoutMediator(sliderDots, imageSlides) { tab, _ ->
+            imageSlides.setCurrentItem(tab.position, false)
         }.attach()
         if (attrs != null) {
             val a = context?.theme?.obtainStyledAttributes(
@@ -87,8 +93,12 @@ class SliderView : RelativeLayout {
             )
             try {
                 if (a != null) {
-                    autoSlide = a.getBoolean(R.styleable.SliderView_autoSlide, false)
                     slideDuration = a.getInt(R.styleable.SliderView_slideDuration, 1000)
+                    transformation = a.getInt(R.styleable.SliderView_transformation, 0)
+                    setTransformation(transformation)
+                    setShowDots(showDots)
+                    autoSlide = a.getBoolean(R.styleable.SliderView_autoSlide, false)
+                    showDots = a.getBoolean(R.styleable.SliderView_showDots, true)
                     captionTextColor = a.getColor(
                         R.styleable.SliderView_captionTextColor,
                         ContextCompat.getColor(context, android.R.color.black)
@@ -102,6 +112,15 @@ class SliderView : RelativeLayout {
                         captionTextColor!!, captionBgColor!!,
                         captionTextSize!!
                     )
+                    slideAdapter.recyclerView.setOnTouchListener { _, motionEvent ->
+                        if (autoSlide) {
+                            if (motionEvent.action == MotionEvent.ACTION_DOWN)
+                                stopSlide()
+                            if (motionEvent.action == MotionEvent.ACTION_UP || motionEvent.action == MotionEvent.ACTION_CANCEL)
+                                startSlide()
+                        }
+                        return@setOnTouchListener false
+                    }
                 }
 
             } catch (e: Exception) {
@@ -113,6 +132,7 @@ class SliderView : RelativeLayout {
     }
 
     private fun startSlide() {
+        stopSlide()
         postDelayed(autoSlideRunnable, slideDuration.toLong())
     }
 
@@ -132,6 +152,11 @@ class SliderView : RelativeLayout {
             stopSlide()
     }
 
+    fun setShowDots(showDots: Boolean) {
+        this.showDots = showDots
+        sliderDots.visibility = if (showDots) View.VISIBLE else View.GONE
+    }
+
     fun setImages(images: ArrayList<SliderModel>) {
         slideAdapter.items = images
         slideAdapter.notifyDataSetChanged()
@@ -146,6 +171,20 @@ class SliderView : RelativeLayout {
         super.onAttachedToWindow()
         if (autoSlide) {
             startSlide()
+        }
+    }
+
+    fun setTransformation(transformation: Int) {
+        this.transformation = transformation
+        when (transformation) {
+            Transformation.Default -> imageSlides.setPageTransformer(DefaultPageTransformer())
+            Transformation.Cube -> imageSlides.setPageTransformer(CubeOutPageTransformer())
+            Transformation.Spin -> imageSlides.setPageTransformer(SpinPageTransformer())
+            Transformation.ZoomOut -> imageSlides.setPageTransformer(ZoomOutPageTransformer())
+            else -> {
+                imageSlides.setPageTransformer(DefaultPageTransformer())
+                this.transformation = 0
+            }
         }
     }
 }

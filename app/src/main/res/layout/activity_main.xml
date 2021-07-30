@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,22 +7,30 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <me.mutasem.imageslider.SliderView
-        android:id="@+id/slider"
-        app:captionTextSize="16sp"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:captionBgColor="#888888"
-        app:captionTextColor="#FFFFFF" />
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:padding="5dp"
-        android:justificationMode="inter_word"
-        android:textSize="15sp"
-        android:layout_margin="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:text="@string/desc" />
+        <me.mutasem.imageslider.SliderView
+            android:id="@+id/slider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:captionBgColor="#888888"
+            app:showDots="true"
+            app:transformation="cube"
+            app:captionTextColor="#FFFFFF"
+            app:captionTextSize="16sp" />
 
-</LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_marginTop="15dp"
+            android:justificationMode="inter_word"
+            android:padding="5dp"
+            android:text="@string/desc"
+            android:textSize="15sp" />
+    </LinearLayout>
+
+</ScrollView>

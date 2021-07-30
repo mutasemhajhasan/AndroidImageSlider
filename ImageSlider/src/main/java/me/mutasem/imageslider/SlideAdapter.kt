@@ -17,7 +17,9 @@ import java.util.ArrayList
 
 class SlideAdapter(var items: ArrayList<SliderModel>) :
     RecyclerView.Adapter<SlideAdapter.SlideHolder>() {
-    private var captionTextSize: Float=0f
+    private lateinit var _recyclerView: RecyclerView
+     val recyclerView: RecyclerView get() = _recyclerView
+    private var captionTextSize: Float = 0f
 
     @ColorInt
     private var captionColor: Int = 0
@@ -49,15 +51,19 @@ class SlideAdapter(var items: ArrayList<SliderModel>) :
         holder.slideCaption.text = items[position].caption
         holder.slideCaption.setTextColor(captionColor)
         holder.slideCaption.setBackgroundColor(captionBgColor)
-        if (captionTextSize>0)
-            holder.slideCaption.setTextSize(TypedValue.COMPLEX_UNIT_PX,captionTextSize)
+        if (captionTextSize > 0)
+            holder.slideCaption.setTextSize(TypedValue.COMPLEX_UNIT_PX, captionTextSize)
     }
 
-    fun setCaptionAttrs(captionColor: Int, captionBgColor: Int,captionTextSize:Float) {
+    fun setCaptionAttrs(captionColor: Int, captionBgColor: Int, captionTextSize: Float) {
         this.captionColor = captionColor
         this.captionBgColor = captionBgColor
-        this.captionTextSize=captionTextSize
+        this.captionTextSize = captionTextSize
         notifyDataSetChanged()
     }
 
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        this._recyclerView = recyclerView
+        super.onAttachedToRecyclerView(recyclerView)
+    }
 }
