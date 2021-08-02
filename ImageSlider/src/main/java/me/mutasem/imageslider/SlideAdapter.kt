@@ -15,10 +15,11 @@ import androidx.viewpager.widget.PagerAdapter
 import com.squareup.picasso.Picasso
 import java.util.ArrayList
 
-class SlideAdapter(var items: ArrayList<SliderModel>) :
+class SlideAdapter() :
     RecyclerView.Adapter<SlideAdapter.SlideHolder>() {
+    private var items: List<SliderModel> = listOf()
     private lateinit var _recyclerView: RecyclerView
-     val recyclerView: RecyclerView get() = _recyclerView
+    val recyclerView: RecyclerView get() = _recyclerView
     private var captionTextSize: Float = 0f
 
     @ColorInt
@@ -65,5 +66,11 @@ class SlideAdapter(var items: ArrayList<SliderModel>) :
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         this._recyclerView = recyclerView
         super.onAttachedToRecyclerView(recyclerView)
+    }
+
+    fun update(images: List<SliderModel>) {
+        items = if (images.isNotEmpty())
+            listOf(images.last()) + images + images.first() else listOf()
+        notifyDataSetChanged()
     }
 }

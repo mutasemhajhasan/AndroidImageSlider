@@ -74,16 +74,16 @@ class SliderView : RelativeLayout {
         defStyleRes: Int
     ) {
         View.inflate(context, R.layout.slider_layout, this)
-        slideAdapter = SlideAdapter(
-            arrayListOf()
-        )
+        slideAdapter = SlideAdapter()
         imageSlides = findViewById(R.id.pager)
         sliderDots = findViewById(R.id.tabs)
         sliderDots.visibility = if (showDots) View.VISIBLE else View.GONE
         imageSlides.adapter = slideAdapter
-        TabLayoutMediator(sliderDots, imageSlides) { tab, _ ->
-            imageSlides.setCurrentItem(tab.position, false)
-        }.attach()
+//        TabLayoutMediator(sliderDots, imageSlides) { tab, position ->
+//            if (position > 0 && position < slideAdapter.itemCount - 1)
+//                imageSlides.setCurrentItem(tab.position, false)
+//        }.attach()
+
         if (attrs != null) {
             val a = context?.theme?.obtainStyledAttributes(
                 attrs,
@@ -96,9 +96,9 @@ class SliderView : RelativeLayout {
                     slideDuration = a.getInt(R.styleable.SliderView_slideDuration, 1000)
                     transformation = a.getInt(R.styleable.SliderView_transformation, 0)
                     setTransformation(transformation)
+                    showDots = a.getBoolean(R.styleable.SliderView_showDots, true)
                     setShowDots(showDots)
                     autoSlide = a.getBoolean(R.styleable.SliderView_autoSlide, false)
-                    showDots = a.getBoolean(R.styleable.SliderView_showDots, true)
                     captionTextColor = a.getColor(
                         R.styleable.SliderView_captionTextColor,
                         ContextCompat.getColor(context, android.R.color.black)
@@ -122,7 +122,42 @@ class SliderView : RelativeLayout {
                         return@setOnTouchListener false
                     }
                 }
+                with(imageSlides) {
+                    registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                        override fun onPageScrollStateChanged(state: Int) {
+                            super.onPageScrollStateChanged(state)
+                            if (state == ViewPager2.SCROLL_STATE_IDLE || state == ViewPager2.SCROLL_STATE_DRAGGING) {
+                                if (currentItem == 0)
+                                    setCurrentItem(adapter!!.itemCount - 2, false)
+                                else if (currentItem == adapter!!.itemCount - 1)
+                                    setCurrentItem(1, false)
+                            }
+                        }
 
+                        override fun onPageSelected(position: Int) {
+                            super.onPageSelected(position)
+                            if (position == 0 || position == slideAdapter.itemCount - 1)
+                                return
+                            val t = sliderDots.getTabAt(position - 1)
+                            t?.select()
+                        }
+                    })
+                }
+                sliderDots.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+                    override fun onTabSelected(tab: TabLayout.Tab?) {
+                        val pos = tab?.position
+                        if (pos != null && pos + 1 < slideAdapter.itemCount - 1)
+                            imageSlides.setCurrentItem(pos + 1, true)
+                    }
+
+                    override fun onTabUnselected(tab: TabLayout.Tab?) {
+
+                    }
+
+                    override fun onTabReselected(tab: TabLayout.Tab?) {
+
+                    }
+                })
             } catch (e: Exception) {
                 Log.e(TAG, "error", e)
             } finally {
@@ -158,8 +193,9 @@ class SliderView : RelativeLayout {
     }
 
     fun setImages(images: ArrayList<SliderModel>) {
-        slideAdapter.items = images
-        slideAdapter.notifyDataSetChanged()
+        slideAdapter.update(images)
+        sliderDots.removeAllTabs()
+        repeat(images.size) { sliderDots.addTab(sliderDots.newTab()) }
     }
 
     override fun onDetachedFromWindow() {
