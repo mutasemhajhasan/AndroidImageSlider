@@ -5,17 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.annotation.ColorInt
-import androidx.annotation.ColorRes
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager.widget.PagerAdapter
 import com.squareup.picasso.Picasso
-import java.util.ArrayList
 
-class SlideAdapter() :
+class SlideAdapter(val actionListener: ActionListener? = null) :
     RecyclerView.Adapter<SlideAdapter.SlideHolder>() {
     private var items: List<SliderModel> = listOf()
     private lateinit var _recyclerView: RecyclerView
@@ -44,14 +39,21 @@ class SlideAdapter() :
     }
 
     override fun onBindViewHolder(holder: SlideHolder, position: Int) {
-        Picasso.get().load(items[position].imageUrl)
+        val item = items[position]
+        Picasso.get().load(item.imageUrl)
             .placeholder(android.R.drawable.progress_indeterminate_horizontal)
 //            .error(R.drawable.ic_error)
 
             .into(holder.slideImage)
-        holder.slideCaption.text = items[position].caption
+        holder.slideCaption.text = item.caption
         holder.slideCaption.setTextColor(captionColor)
         holder.slideCaption.setBackgroundColor(captionBgColor)
+        holder.slideImage.setOnClickListener {
+            actionListener?.onItemClick(item)
+        }
+        holder.slideCaption.setOnClickListener {
+            actionListener?.onItemClick(item)
+        }
         if (captionTextSize > 0)
             holder.slideCaption.setTextSize(TypedValue.COMPLEX_UNIT_PX, captionTextSize)
     }
@@ -72,5 +74,9 @@ class SlideAdapter() :
         items = if (images.isNotEmpty())
             listOf(images.last()) + images + images.first() else listOf()
         notifyDataSetChanged()
+    }
+
+    interface ActionListener {
+        fun onItemClick(item: SliderModel)
     }
 }
