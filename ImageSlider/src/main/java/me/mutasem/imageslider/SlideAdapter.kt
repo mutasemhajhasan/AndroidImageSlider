@@ -10,7 +10,7 @@ import androidx.annotation.ColorInt
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 
-class SlideAdapter(val actionListener: ActionListener? = null) :
+class SlideAdapter(var actionListener: ActionListener? = null) :
     RecyclerView.Adapter<SlideAdapter.SlideHolder>() {
     private var items: List<SliderModel> = listOf()
     private lateinit var _recyclerView: RecyclerView

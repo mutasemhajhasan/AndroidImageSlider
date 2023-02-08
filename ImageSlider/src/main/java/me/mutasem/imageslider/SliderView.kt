@@ -11,7 +11,6 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayoutMediator
 import java.util.*
 
 class SliderView : RelativeLayout {
@@ -74,10 +73,11 @@ class SliderView : RelativeLayout {
         defStyleRes: Int
     ) {
         View.inflate(context, R.layout.slider_layout, this)
-        slideAdapter = SlideAdapter()
+
         imageSlides = findViewById(R.id.pager)
         sliderDots = findViewById(R.id.tabs)
         sliderDots.visibility = if (showDots) View.VISIBLE else View.GONE
+        slideAdapter = SlideAdapter()
         imageSlides.adapter = slideAdapter
 //        TabLayoutMediator(sliderDots, imageSlides) { tab, position ->
 //            if (position > 0 && position < slideAdapter.itemCount - 1)
@@ -166,6 +166,7 @@ class SliderView : RelativeLayout {
         }
     }
 
+
     private fun startSlide() {
         stopSlide()
         postDelayed(autoSlideRunnable, slideDuration.toLong())
@@ -222,5 +223,9 @@ class SliderView : RelativeLayout {
                 this.transformation = 0
             }
         }
+    }
+
+    fun setActionListener(actionListener: SlideAdapter.ActionListener) {
+        slideAdapter.actionListener = actionListener
     }
 }
